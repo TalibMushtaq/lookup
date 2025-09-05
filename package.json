@@ -16,7 +16,7 @@
     "mongodb"
   ],
   "author": "TalibDar",
-  "license": "none",
+  "license": "MIT",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",

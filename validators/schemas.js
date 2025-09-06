@@ -1,11 +1,11 @@
 const { z } = require("zod");
-const { purchasedModel } = require("../database");
-const course = require("../routes/course");
-const { email } = require("zod/v4");
+
 const adminSchema = z.object({
     email: z.string().max(25).email(),
     password: z.string().min(8).max(16),
-    Name: z.string().min(3).max(20)
+    FirstName: z.string().min(3).max(20),
+    LastName: z.string().min(3).max(20)
+
 });
 
 const courseSchema = z.object({
@@ -23,7 +23,8 @@ const updatecourseSchema = z.object({
 const userSchema = z.object({
     email: z.string().max(25).email(),
     password: z.string().min(8).max(16),
-    Name: z.string().min(3).max(20)
+    FirstName: z.string().min(3).max(20),
+    LastName: z.string().min(3).max(20)
 });
 const userSignin = z.object({
     email: z.string().max(25).email(),

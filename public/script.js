@@ -26,15 +26,53 @@ function showLoginForm(type) {
     // Hide all forms first
     document.getElementById('userAuthForm').classList.add('hidden');
     document.getElementById('adminAuthForm').classList.add('hidden');
+    document.getElementById('userAuthChoice').classList.add('hidden');
+    document.getElementById('adminAuthChoice').classList.add('hidden');
     document.getElementById('heroSection').classList.add('hidden');
     
-    // Show selected form
-    document.getElementById(`${type}AuthForm`).classList.remove('hidden');
+    // Show the choice form for the selected type
+    document.getElementById(`${type}AuthChoice`).classList.remove('hidden');
+}
+
+function showAuthForm(type, action) {
+    // Hide choice forms
+    document.getElementById('userAuthChoice').classList.add('hidden');
+    document.getElementById('adminAuthChoice').classList.add('hidden');
+
+    const form = document.getElementById(`${type}AuthForm`);
+    const title = document.getElementById(`${type}FormTitle`);
+    const subtitle = document.getElementById(`${type}FormSubtitle`);
+    const button = document.getElementById(`${type}AuthButton`);
+    const nameGroup = document.getElementById('userNameGroup');
+
+    if (action === 'signin') {
+        title.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Sign In`;
+        subtitle.textContent = `Access your ${type === 'user' ? 'learning journey' : 'dashboard'}`;
+        button.textContent = 'Sign In';
+        button.onclick = () => handleAuth(type, 'signin');
+        if (type === 'user') {
+            nameGroup.classList.add('hidden');
+            document.getElementById('userName').required = false;
+        }
+    } else { // signup
+        title.textContent = `Create ${type.charAt(0).toUpperCase() + type.slice(1)} Account`;
+        subtitle.textContent = 'Fill in the details below to get started.';
+        button.textContent = 'Sign Up';
+        button.onclick = () => handleAuth(type, 'signup');
+        if (type === 'user') {
+            nameGroup.classList.remove('hidden');
+            document.getElementById('userName').required = true;
+        }
+    }
+
+    form.classList.remove('hidden');
 }
 
 function hideAuthForms() {
     document.getElementById('userAuthForm').classList.add('hidden');
     document.getElementById('adminAuthForm').classList.add('hidden');
+    document.getElementById('userAuthChoice').classList.add('hidden');
+    document.getElementById('adminAuthChoice').classList.add('hidden');
     document.getElementById('heroSection').classList.remove('hidden');
     
     // Clear form fields
@@ -43,20 +81,33 @@ function hideAuthForms() {
     document.getElementById('userName').value = '';
     document.getElementById('adminEmail').value = '';
     document.getElementById('adminPassword').value = '';
-    document.getElementById('adminName').value = '';
     
     // Clear error messages
     document.getElementById('userAuthError').textContent = '';
     document.getElementById('adminAuthError').textContent = '';
 }
 
+async function handleAuth(type, action) {
+    if (type === 'user') {
+        await handleUserAuth(action);
+    } else {
+        await handleAdminAuth(action);
+    }
+}
+
 async function handleUserAuth(action) {
     const email = document.getElementById('userEmail').value.trim();
     const password = document.getElementById('userPassword').value;
+    const name = document.getElementById('userName').value.trim();
     
-    if (!email || !password) {
-        showError('userAuthError', 'Please fill in all fields');
+    if (!email || !password || (action === 'signup' && !name)) {
+        showError('userAuthError', 'Please fill in all required fields');
         return;
+    }
+
+    const body = { email, password };
+    if (action === 'signup') {
+        body.name = name;
     }
 
     try {
@@ -65,7 +116,7 @@ async function handleUserAuth(action) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify(body)
         });
 
         const data = await response.json();
@@ -143,10 +194,7 @@ function logout() {
     currentUserType = null;
     
     // Clear any forms
-    document.getElementById('userEmail').value = '';
-    document.getElementById('userPassword').value = '';
-    document.getElementById('adminEmail').value = '';
-    document.getElementById('adminPassword').value = '';
+    hideAuthForms();
     
     updateUI();
 }
@@ -186,13 +234,17 @@ function displayCourses(courses) {
         const imageUrl = course.imageUrl || 'https://via.placeholder.com/300x200?text=Course+Image';
         const title = course.title || 'Untitled Course';
         const description = course.description || 'No description available';
+        const price = course.price > 0 ? `$${course.price.toFixed(2)}` : 'Free';
         
         courseElement.innerHTML = `
             <img src="${imageUrl}" alt="${title}" onerror="this.src='https://via.placeholder.com/300x200?text=Course+Image'">
             <div class="course-card-content">
                 <h3>${title}</h3>
                 <p>${description}</p>
-                ${getActionButton(course)}
+                <div class="course-card-footer">
+                    <span class="course-price">${price}</span>
+                    ${getActionButton(course)}
+                </div>
             </div>
         `;
         container.appendChild(courseElement);
@@ -200,14 +252,19 @@ function displayCourses(courses) {
 }
 
 function getActionButton(course) {
-    const price = course.price ? `${course.price}` : 'Free';
-    
     if (currentUserType === 'user') {
-        return `<button class="btn-primary" onclick="purchaseCourse('${course._id}')">Purchase ${price}</button>`;
+        // Check if the user has already purchased this course
+        const userCourses = JSON.parse(localStorage.getItem('userCourses')) || [];
+        const isPurchased = userCourses.some(p_course => p_course._id === course._id);
+        
+        if (isPurchased) {
+            return `<button class="btn-secondary" onclick="viewCourse('${course._id}')" disabled>Purchased</button>`;
+        }
+        return `<button class="btn-primary" onclick="purchaseCourse('${course._id}')">Purchase</button>`;
     } else if (currentUserType === 'admin') {
-        return `<button class="btn-outline" onclick="editCourse('${course._id}')">Edit Course</button>`;
+        return `<button class="btn-outline" onclick="editCourse('${course._id}')">Edit</button>`;
     } else {
-        return `<button class="btn-primary" onclick="showLoginForm('user')">Login to Purchase ${price}</button>`;
+        return `<button class="btn-primary" onclick="showLoginForm('user')">Purchase</button>`;
     }
 }
 
@@ -286,7 +343,8 @@ async function purchaseCourse(courseId) {
 
         if (response.ok) {
             alert('Course purchased successfully!');
-            loadCourses(); // Refresh courses to update UI if needed
+            loadUserCourses(); // Refresh user's course list
+            loadCourses(); // Refresh public courses to update button state
         } else {
             alert(data.message || 'Failed to purchase course');
         }
@@ -362,7 +420,9 @@ async function loadUserCourses() {
         const data = await response.json();
         
         if (response.ok) {
-            displayUserCourses(data.courses || []);
+            const purchasedCourses = data.courses || [];
+            localStorage.setItem('userCourses', JSON.stringify(purchasedCourses)); // Cache user courses
+            displayUserCourses(purchasedCourses);
         }
     } catch (error) {
         console.error('Error loading user courses:', error);
@@ -448,7 +508,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Make functions globally available
 window.showLoginForm = showLoginForm;
+window.showAuthForm = showAuthForm;
 window.hideAuthForms = hideAuthForms;
+window.handleAuth = handleAuth;
 window.handleUserAuth = handleUserAuth;
 window.handleAdminAuth = handleAdminAuth;
 window.logout = logout;

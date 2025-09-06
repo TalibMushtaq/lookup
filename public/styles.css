@@ -190,6 +190,18 @@ body {
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
+.form-group .btn-primary,
+.form-group .btn-secondary,
+.auth-form .btn-primary,
+.auth-form .btn-secondary {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.auth-form .btn-primary {
+    margin-top: 0;
+}
+
 .auth-buttons-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -258,13 +270,27 @@ body {
 
 .course-card p {
     color: var(--text-secondary);
-    margin-bottom: 1.5rem;
     font-size: 0.875rem;
-    line-height: 1.6;
+    flex-grow: 1;
+    margin-bottom: 1rem;
+}
+
+.course-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.course-price {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .course-card button {
-    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
 }
 
 /* No courses message */

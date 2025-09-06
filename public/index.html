@@ -26,37 +26,60 @@
             <p>Discover courses crafted by industry experts</p>
         </div>
 
+        <!-- User Auth Choice -->
+        <div id="userAuthChoice" class="auth-form hidden">
+            <div class="form-header">
+                <h2>Welcome User</h2>
+                <p>Sign in to your account or create a new one.</p>
+            </div>
+            <div class="auth-buttons-container">
+                <button class="btn-primary" onclick="showAuthForm('user', 'signin')">Sign In</button>
+                <button class="btn-outline" onclick="showAuthForm('user', 'signup')">Sign Up</button>
+            </div>
+            <button class="btn-secondary" onclick="hideAuthForms()" style="margin-top: 1rem; width: 100%;">Cancel</button>
+        </div>
+
         <!-- User Login/Signup Form -->
         <div id="userAuthForm" class="auth-form hidden">
             <div class="form-header">
-                <h2>User Authentication</h2>
-                <p>Access your learning journey</p>
+                <h2 id="userFormTitle"></h2>
+                <p id="userFormSubtitle"></p>
             </div>
             <div class="form-group">
                 <label for="userEmail">Email</label>
                 <input type="email" id="userEmail" placeholder="Enter your email" required>
             </div>
+            <div class="form-group hidden" id="userNameGroup">
+                <label for="userName">Full Name</label>
+                <input type="text" id="userName" placeholder="Enter Full Name">
+            </div>
             <div class="form-group">
                 <label for="userPassword">Password</label>
                 <input type="password" id="userPassword" placeholder="Enter your password" required>
             </div>
-            <div class = "form-group">
-                <label for="userFullname">FullName</label>
-                <input type="text"id="userName" placeholder="Enter Full Name" required>
+            <button id="userAuthButton" class="btn-primary" style="width: 100%;"></button>
+            <p class="error-message" id="userAuthError"></p>
+            <button class="btn-secondary" onclick="showLoginForm('user')" style="margin-top: 1rem; width: 100%;">Back</button>
+        </div>
+
+        <!-- Admin Auth Choice -->
+        <div id="adminAuthChoice" class="auth-form hidden">
+            <div class="form-header">
+                <h2>Welcome Admin</h2>
+                <p>Sign in to the dashboard or create a new admin account.</p>
             </div>
             <div class="auth-buttons-container">
-                <button class="btn-primary" onclick="handleUserAuth('signin')">Login</button>
-                <button class="btn-outline" onclick="handleUserAuth('signup')">Sign Up</button>
+                <button class="btn-primary" onclick="showAuthForm('admin', 'signin')">Sign In</button>
+                <button class="btn-outline" onclick="showAuthForm('admin', 'signup')">Sign Up</button>
             </div>
-            <p class="error-message" id="userAuthError"></p>
             <button class="btn-secondary" onclick="hideAuthForms()" style="margin-top: 1rem; width: 100%;">Cancel</button>
         </div>
 
         <!-- Admin Login/Signup Form -->
         <div id="adminAuthForm" class="auth-form hidden">
             <div class="form-header">
-                <h2>Admin Dashboard</h2>
-                <p>Manage your courses and platform</p>
+                <h2 id="adminFormTitle"></h2>
+                <p id="adminFormSubtitle"></p>
             </div>
             <div class="form-group">
                 <label for="adminEmail">Email</label>
@@ -66,12 +89,9 @@
                 <label for="adminPassword">Password</label>
                 <input type="password" id="adminPassword" placeholder="Enter password" required>
             </div>
-            <div class="auth-buttons-container">
-                <button class="btn-primary" onclick="handleAdminAuth('signin')">Login</button>
-                <button class="btn-outline" onclick="handleAdminAuth('signup')">Sign Up</button>
-            </div>
+            <button id="adminAuthButton" class="btn-primary" style="width: 100%;"></button>
             <p class="error-message" id="adminAuthError"></p>
-            <button class="btn-secondary" onclick="hideAuthForms()" style="margin-top: 1rem; width: 100%;">Cancel</button>
+            <button class="btn-secondary" onclick="showLoginForm('admin')" style="margin-top: 1rem; width: 100%;">Back</button>
         </div>
 
         <!-- Admin Course Creation Panel -->

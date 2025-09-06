@@ -3,7 +3,7 @@ const cors = require("cors");
 const path = require("path");
 const { userRouter } = require("./routes/user");
 const { courseRouter } = require("./routes/course");
-const { adminRouter } = require("./routes/admin");
+const { instructorRouter } = require("./routes/instructor");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
-app.use("/api/admin", adminRouter);
+app.use("/api/instructor", instructorRouter);
 app.use("/api/user", userRouter);
 app.use("/api/course", courseRouter);
 

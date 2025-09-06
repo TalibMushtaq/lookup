@@ -18,7 +18,7 @@ const userSchema = new Schema({
     lastName : { type : String , required : true }
 });
 
-const adminSchema = new Schema({
+const instructorSchema = new Schema({
     email : { type : String , unique : true , required : true },
     hashedPassword : {type : String , required : true},
     firstName : { type : String , required : true},
@@ -42,13 +42,13 @@ const purchasedSchema = new Schema({
 );
 
 const userModel = mongoose.model("user",userSchema);
-const adminModel = mongoose.model("admin",adminSchema);
+const instructorModel = mongoose.model("instructor",instructorSchema);
 const coursesModel = mongoose.model("courses",courseSchema);
 const purchasedModel = mongoose.model("purchased",purchasedSchema);
 
 module.exports = {
     userModel,
-    adminModel,
+    instructorModel,
     coursesModel,
     purchasedModel
 }

@@ -1,10 +1,10 @@
 const { z } = require("zod");
 
-const adminSchema = z.object({
+const instructorSchema = z.object({
     email: z.string().max(25).email(),
     password: z.string().min(8).max(16),
-    FirstName: z.string().min(3).max(20),
-    LastName: z.string().min(3).max(20)
+    firstName: z.string().min(3).max(20),
+    lastName: z.string().min(3).max(20)
 
 });
 
@@ -23,17 +23,24 @@ const updatecourseSchema = z.object({
 const userSchema = z.object({
     email: z.string().max(25).email(),
     password: z.string().min(8).max(16),
-    FirstName: z.string().min(3).max(20),
-    LastName: z.string().min(3).max(20)
+    firstName: z.string().min(3).max(20),
+    lastName: z.string().min(3).max(20)
 });
 const userSignin = z.object({
     email: z.string().max(25).email(),
     password: z.string().min(8).max(16)
 });
+const instructorSignin = z.object({
+    email: z.string().max(25).email(),
+    password: z.string().min(8).max(16)
+});
+
+
 
 
 module.exports = {
-    adminSchema,
+    instructorSchema,
+    instructorSignin,
     courseSchema,
     updatecourseSchema,
     userSchema,

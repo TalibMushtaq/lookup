@@ -1,16 +1,16 @@
 const { Router } = require("express");
-const { adminModel, coursesModel } = require("../database");
-const { adminSchema, courseSchema, updatecourseSchema } = require("../validators/schemas");
+const { instructorModel, coursesModel } = require("../database");
+const { instructorSchema,instructorSignin, courseSchema, updatecourseSchema } = require("../validators/schemas");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const { adminAuth  } = require("../middlewares/auth");
-const adminRouter = Router();
+const { instructorAuth  } = require("../middlewares/auth");
+const instructorRouter = Router();
 require("dotenv").config();
 
 
-adminRouter.post("/signup", async function(req,res){
-    const safeParsedData = adminSchema.safeParse(req.body);
+instructorRouter.post("/signup", async function(req,res){
+    const safeParsedData = instructorSignin.safeParse(req.body);
 
     if(!safeParsedData.success){
         res.json({
@@ -22,16 +22,16 @@ adminRouter.post("/signup", async function(req,res){
     const { email, password, firstName, lastName } = req.body;
 
     try {
-        const existingUser = await adminModel.findOne({email});
+        const existingUser = await instructorModel.findOne({email});
         if (existingUser){
             return res.status(409).json({
-                message: "admin alredy exists "
+                message: "instructor alredy exists "
             });
         }
 
         const hashedPassword = await bcrypt.hash(password,6);
         
-        await adminModel.create({
+        await instructorModel.create({
             email,
             hashedPassword,
             firstName,
@@ -39,7 +39,7 @@ adminRouter.post("/signup", async function(req,res){
         });
 
         res.status(201).json({
-            message : "admin Created Successfully"
+            message : "instructor Created Successfully"
         });
     } catch (error) {
         console.error("signup error :", error);
@@ -49,8 +49,8 @@ adminRouter.post("/signup", async function(req,res){
     }
 });
 
-adminRouter.post("/signin",async function(req,res){
-    const safeparsedData = adminSchema.safeParse(req.body);
+instructorRouter.post("/signin",async function(req,res){
+    const safeparsedData = instructorSchema.safeParse(req.body);
 
     if(!safeparsedData.success){
         res.json({
@@ -61,20 +61,20 @@ adminRouter.post("/signin",async function(req,res){
     }
     const { email, password } = req.body;
     
-    const admin = await adminModel.findOne({ email });
+    const instructor = await instructorModel.findOne({ email });
 
-    if(!admin){
+    if(!instructor){
         res.status(403).json({
-            message : "You Do Not Have Admin Access",
+            message : "You Do Not Have Instructor Access",
         });
         return;
     }
 
-    const passwordMatch = await bcrypt.compare(password , admin.hashedPassword);
+    const passwordMatch = await bcrypt.compare(password , instructor.hashedPassword);
     if(passwordMatch) {
         const token = jwt.sign({
-            id : admin._id.toString()
-        },process.env.JWT_Admin);
+            id : instructor._id.toString()
+        },process.env.JWT_Instructor);
 
         res.status(201).json({
             token,
@@ -87,7 +87,7 @@ adminRouter.post("/signin",async function(req,res){
     }
 });
 
-adminRouter.post("/course",adminAuth,async function(req , res){
+instructorRouter.post("/course",instructorAuth,async function(req , res){
     try {
         const safeParsedData = courseSchema.safeParse(req.body);
 
@@ -102,7 +102,7 @@ adminRouter.post("/course",adminAuth,async function(req , res){
             title : safeParsedData.data.title,
             description : safeParsedData.data.description,
             imageUrl : safeParsedData.data.imageUrl,
-            creatorId : new mongoose.Types.ObjectId(req.adminid)
+            creatorId : new mongoose.Types.ObjectId(req.instructorid)
         });
         return res.json({
             message : "Task Created",
@@ -118,7 +118,7 @@ adminRouter.post("/course",adminAuth,async function(req , res){
 });
 
 
-adminRouter.put("/course/:courseId", adminAuth, async function(req, res) {
+instructorRouter.put("/course/:courseId", instructorAuth, async function(req, res) {
     
     try {
         const safeParsedData = updatecourseSchema.safeParse(req.body);
@@ -147,7 +147,7 @@ adminRouter.put("/course/:courseId", adminAuth, async function(req, res) {
             });
         }
 
-        if (course.creatorId.toString() !== req.adminid){
+        if (course.creatorId.toString() !== req.instructorid){
             return res.status(403).json({
                 message : "Unauthorized: You cna only update courses you created"
             });
@@ -173,10 +173,10 @@ adminRouter.put("/course/:courseId", adminAuth, async function(req, res) {
 });
 
 
-adminRouter.get("/course/bulk",adminAuth, async function(req,res){
+instructorRouter.get("/course/bulk",instructorAuth, async function(req,res){
     try {
-        const adminid = req.adminid;
-        const courses = await coursesModel.find({ creatorId : adminid });
+        const instructorid = req.instructorid;
+        const courses = await coursesModel.find({ creatorId : instructorid });
 
         res.status(200).json({
             message : "Courses retrived successful",
@@ -192,5 +192,5 @@ adminRouter.get("/course/bulk",adminAuth, async function(req,res){
 });
 
 module.exports = {
-    adminRouter : adminRouter
+    instructorRouter : instructorRouter
 }

@@ -35,7 +35,8 @@ userRouter.post("/signup", async function(req,res){
         await userModel.create({
             email,
             hashedPassword,
-            Name
+            firstName,
+            lastName
         });
 
         res.status(201).json({

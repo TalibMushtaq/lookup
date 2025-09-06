@@ -43,7 +43,7 @@ function showAuthForm(type, action) {
     const title = document.getElementById(`${type}FormTitle`);
     const subtitle = document.getElementById(`${type}FormSubtitle`);
     const button = document.getElementById(`${type}AuthButton`);
-    const nameGroup = document.getElementById('userNameGroup');
+    const nameFields = document.getElementById('userNameFields');
 
     if (action === 'signin') {
         title.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Sign In`;
@@ -51,8 +51,9 @@ function showAuthForm(type, action) {
         button.textContent = 'Sign In';
         button.onclick = () => handleAuth(type, 'signin');
         if (type === 'user') {
-            nameGroup.classList.add('hidden');
-            document.getElementById('userName').required = false;
+            nameFields.classList.add('hidden');
+            document.getElementById('userFirstName').required = false;
+            document.getElementById('userLastName').required = false;
         }
     } else { // signup
         title.textContent = `Create ${type.charAt(0).toUpperCase() + type.slice(1)} Account`;
@@ -60,8 +61,9 @@ function showAuthForm(type, action) {
         button.textContent = 'Sign Up';
         button.onclick = () => handleAuth(type, 'signup');
         if (type === 'user') {
-            nameGroup.classList.remove('hidden');
-            document.getElementById('userName').required = true;
+            nameFields.classList.remove('hidden');
+            document.getElementById('userFirstName').required = true;
+            document.getElementById('userLastName').required = true;
         }
     }
 
@@ -78,7 +80,8 @@ function hideAuthForms() {
     // Clear form fields
     document.getElementById('userEmail').value = '';
     document.getElementById('userPassword').value = '';
-    document.getElementById('userName').value = '';
+    document.getElementById('userFirstName').value = '';
+    document.getElementById('userLastName').value = '';
     document.getElementById('adminEmail').value = '';
     document.getElementById('adminPassword').value = '';
     
@@ -98,16 +101,18 @@ async function handleAuth(type, action) {
 async function handleUserAuth(action) {
     const email = document.getElementById('userEmail').value.trim();
     const password = document.getElementById('userPassword').value;
-    const name = document.getElementById('userName').value.trim();
+    const firstName = document.getElementById('userFirstName').value.trim();
+    const lastName = document.getElementById('userLastName').value.trim();
     
-    if (!email || !password || (action === 'signup' && !name)) {
+    if (!email || !password || (action === 'signup' && (!firstName || !lastName))) {
         showError('userAuthError', 'Please fill in all required fields');
         return;
     }
 
     const body = { email, password };
     if (action === 'signup') {
-        body.name = name;
+        body.firstName = firstName;
+        body.lastName = lastName;
     }
 
     try {
@@ -128,11 +133,9 @@ async function handleUserAuth(action) {
             currentUserType = 'user';
             
             // Clear form
-            document.getElementById('userEmail').value = '';
-            document.getElementById('userPassword').value = '';
+            hideAuthForms();
             
             updateUI();
-            document.getElementById('userAuthForm').classList.add('hidden');
             
             showError('userAuthError', ''); // Clear any previous errors
         } else {

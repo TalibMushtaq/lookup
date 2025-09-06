@@ -15,11 +15,11 @@ function userAuth(req,res,next){
     }
 }
 
-function adminAuth(req,res,next){
+function instructorAuth(req,res,next){
     const token = req.headers.token;
     try{
-        const decodedData = jwt.verify(token , process.env.JWT_Admin);
-        req.adminid = decodedData.id;
+        const decodedData = jwt.verify(token , process.env.JWT_Instructor);
+        req.instructorid = decodedData.id;
         next();
     } catch (error){
         res.status(403).json({
@@ -30,5 +30,5 @@ function adminAuth(req,res,next){
 
 module.exports = {
     userAuth,
-    adminAuth
+    instructorAuth
 };

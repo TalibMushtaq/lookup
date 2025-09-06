@@ -4,7 +4,8 @@ const { instructorSchema,instructorSignin, courseSchema, updatecourseSchema } = 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const { instructorAuth  } = require("../middlewares/auth");
+const authMiddleware = require("../middlewares/auth");
+const { instructorAuth } = authMiddleware;
 const instructorRouter = Router();
 require("dotenv").config();
 

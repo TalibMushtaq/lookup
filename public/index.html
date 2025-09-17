@@ -3,179 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOOKUP - Course Platform</title>
+    <title>Lookup Courses</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-content">
-            <h1>LOOKUP</h1>
-            <div class="auth-buttons">
-                <button class="btn-secondary" onclick="showLoginForm('user')">User Login</button>
-                <button class="btn-secondary" onclick="showLoginForm('admin')">Admin Login</button>
-                <button id="logoutBtn" class="btn-secondary hidden" onclick="logout()">Logout</button>
-            </div>
-        </div>
-    </nav>
+    <header>
+        <nav>
+            <a href="#" id="home-link" class="nav-link">Lookup</a>
+            <button class="hamburger" id="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul id="nav-links">
+                <li>
+                    <form id="search-form" class="search-form">
+                        <input type="search" id="search-input" placeholder="Search for anything...">
+                        <button type="submit" id="search-button">🔍</button>
+                    </form>
+                </li>
+                <li><a href="#" id="courses-link" class="nav-link">Courses</a></li>
+                <li><a href="#" id="user-login-link" class="nav-link">User Login</a></li>
+                <li><a href="#" id="instructor-auth-link" class="nav-link">Instructor</a></li>
+                <li><a href="#" id="signup-link" class="nav-link nav-button">Sign Up</a></li>
+                <li><a href="#" id="logout-link" class="nav-link hidden">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <div class="main-content">
-        <!-- Hero Section (shown when no forms are active) -->
-        <div class="hero-section" id="heroSection">
-            <h2>Expand Your Knowledge</h2>
-            <p>Discover courses crafted by industry experts</p>
-        </div>
-
-        <!-- User Auth Choice -->
-        <div id="userAuthChoice" class="auth-form hidden">
-            <div class="form-header">
-                <h2>Welcome User</h2>
-                <p>Sign in to your account or create a new one.</p>
-            </div>
-            <div class="auth-buttons-container">
-                <button class="btn-primary" onclick="showAuthForm('user', 'signin')">Sign In</button>
-                <button class="btn-outline" onclick="showAuthForm('user', 'signup')">Sign Up</button>
-            </div>
-            <button class="btn-secondary" onclick="hideAuthForms()" style="margin-top: 1rem; width: 100%;">Cancel</button>
-        </div>
-
-        <!-- User Login/Signup Form -->
-        <div id="userAuthForm" class="auth-form hidden">
-            <div class="form-header">
-                <h2 id="userFormTitle"></h2>
-                <p id="userFormSubtitle"></p>
-            </div>
-            <div class="form-group">
-                <label for="userEmail">Email</label>
-                <input type="email" id="userEmail" placeholder="Enter your email" required>
-            </div>
-            <div id="userNameFields" class="hidden">
-                <div class="form-group">
-                    <label for="userFirstName">First Name</label>
-                    <input type="text" id="userFirstName" placeholder="Enter First Name">
-                </div>
-                <div class="form-group">
-                    <label for="userLastName">Last Name</label>
-                    <input type="text" id="userLastName" placeholder="Enter Last Name">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="userPassword">Password</label>
-                <input type="password" id="userPassword" placeholder="Enter your password" required>
-            </div>
-            <button id="userAuthButton" class="btn-primary" style="width: 100%;"></button>
-            <p class="error-message" id="userAuthError"></p>
-            <button class="btn-secondary" onclick="showLoginForm('user')" style="margin-top: 1rem; width: 100%;">Back</button>
-        </div>
-
-        <!-- Admin Auth Choice -->
-        <div id="adminAuthChoice" class="auth-form hidden">
-            <div class="form-header">
-                <h2>Welcome Admin</h2>
-                <p>Sign in to the dashboard or create a new admin account.</p>
-            </div>
-            <div class="auth-buttons-container">
-                <button class="btn-primary" onclick="showAuthForm('admin', 'signin')">Sign In</button>
-                <button class="btn-outline" onclick="showAuthForm('admin', 'signup')">Sign Up</button>
-            </div>
-            <button class="btn-secondary" onclick="hideAuthForms()" style="margin-top: 1rem; width: 100%;">Cancel</button>
-        </div>
-
-        <!-- Admin Login/Signup Form -->
-        <div id="adminAuthForm" class="auth-form hidden">
-            <div class="form-header">
-                <h2 id="adminFormTitle"></h2>
-                <p id="adminFormSubtitle"></p>
-            </div>
-            <div class="form-group">
-                <label for="adminEmail">Email</label>
-                <input type="email" id="adminEmail" placeholder="Enter admin email" required>
-            </div>
-            <div class="form-group">
-                <label for="adminPassword">Password</label>
-                <input type="password" id="adminPassword" placeholder="Enter password" required>
-            </div>
-            <button id="adminAuthButton" class="btn-primary" style="width: 100%;"></button>
-            <p class="error-message" id="adminAuthError"></p>
-            <button class="btn-secondary" onclick="showLoginForm('admin')" style="margin-top: 1rem; width: 100%;">Back</button>
-        </div>
-
-        <!-- Admin Course Creation Panel -->
-        <div id="adminPanel" class="hidden">
-            <div class="admin-header">
-                <h2>Create New Course</h2>
-                <p>Share your knowledge with the world</p>
-            </div>
-            <div class="form-group">
-                <label for="courseTitle">Course Title</label>
-                <input type="text" id="courseTitle" placeholder="Enter course title" required>
-            </div>
-            <div class="form-group">
-                <label for="courseDescription">Course Description</label>
-                <textarea id="courseDescription" placeholder="Enter course description" required rows="4"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="courseImage">Course Image URL (optional)</label>
-                <input type="url" id="courseImage" placeholder="https://example.com/image.jpg">
-                <small style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 0.25rem; display: block;">
-                    Leave empty to use default placeholder image
-                </small>
-            </div>
-            <div class="form-group">
-                <label for="coursePrice">Course Price ($)</label>
-                <input type="number" id="coursePrice" placeholder="0.00" min="0" step="0.01">
-            </div>
-            <button class="btn-primary" onclick="createCourse()">Create Course</button>
-            <p class="error-message" id="courseCreateError"></p>
-        </div>
-
-        <!-- User Dashboard (for purchased courses) -->
-        <div id="userDashboard" class="hidden">
-            <div class="section-header">
-                <h2>My Courses</h2>
-                <p>Your purchased courses and learning progress</p>
-            </div>
-            <div id="userCoursesContainer" class="courses-grid">
-                <!-- User's purchased courses will be displayed here -->
-            </div>
-        </div>
-
-        <!-- Public Courses Display -->
-        <div class="courses-section">
-            <div class="section-header">
-                <h2>Available Courses</h2>
-                <p>Choose from our wide range of courses</p>
-            </div>
-            <div id="coursesContainer" class="courses-grid">
-                <!-- Loading placeholder -->
-                <div class="loading-placeholder">
-                    <p>Loading courses...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Course Details Modal (for future use) -->
-        <div id="courseModal" class="modal hidden">
-            <div class="modal-content">
-                <span class="close" onclick="closeCourseModal()">&times;</span>
-                <div id="courseDetails">
-                    <!-- Course details will be populated here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2024 LOOKUP. All rights reserved.</p>
-            <div class="footer-links">
-                <a href="#" onclick="showAbout()">About</a>
-                <a href="#" onclick="showContact()">Contact</a>
-                <a href="#" onclick="showPrivacy()">Privacy Policy</a>
-            </div>
-        </div>
-    </footer>
+    <main id="app-root">
+        <!-- Content will be rendered here by JavaScript -->
+    </main>
 
     <script src="script.js"></script>
 </body>

@@ -9,15 +9,19 @@ const instructorSchema = z.object({
 });
 
 const courseSchema = z.object({
-    title : z.string().min(5).max(20),
-    description : z.string().min(20).max(100),
-    imageUrl : z.string().url()
+    title : z.string().min(5).max(50),
+    description : z.string().min(20).max(500),
+    price: z.preprocess((a) => parseFloat(z.string().parse(a)), z.number().positive()),
+    imageUrl : z.string().url(),
+    videoUrl: z.string().url().optional().or(z.literal('')),
 });
 
 const updatecourseSchema = z.object({
-    title : z.string().min(5).max(20).optional(),
-    description : z.string().min(20).max(100).optional(),
-    imageUrl : z.string().url().optional()
+    title : z.string().min(5).max(50).optional(),
+    description : z.string().min(20).max(500).optional(),
+    price: z.preprocess((a) => parseFloat(z.string().parse(a)), z.number().positive()).optional(),
+    imageUrl : z.string().url().optional(),
+    videoUrl: z.string().url().optional().or(z.literal(''))
 });
 
 const userSchema = z.object({

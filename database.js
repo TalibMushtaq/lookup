@@ -28,8 +28,11 @@ const instructorSchema = new Schema({
 const courseSchema = new Schema({
     title : String,
     description : String,
+    price: Number,
     imageUrl : String,
-    creatorId : ObjectId,
+    videoUrl: String,
+    instructor : { type: ObjectId, ref: 'instructor' },
+    published: Boolean,
 },{ timestamps: true }
 );
 
